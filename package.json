@@ -1,0 +1,16 @@
+{
+  "name": "input-wizard",
+  "version": "1.0.0",
+  "description": "Yet another autocomplete JQuery plugin.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gizmosoft Solutions",
+  "license": "MIT",
+  "dependencies": {
+    "input-manager": "file:../input-manager",
+    "jquery": "^3.6.0",
+    "option-selector": "file:../option-selector",
+    "translitration-service": "file:../translitration-service"
+  }
+}

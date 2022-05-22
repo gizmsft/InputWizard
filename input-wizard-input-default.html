@@ -1,0 +1,102 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Input Wizard</title>
+    <link rel="stylesheet" type="text/css" href="css/input-wizard.css" />
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="node_modules/translitration-service/lib/words.js"></script>
+    <script type="text/javascript" src="node_modules/translitration-service/lib/dictionary.js"></script>
+    <script type="text/javascript" src="node_modules/input-manager/lib/caret-locator.js"></script>
+    <script type="text/javascript" src="node_modules/input-manager/lib/input-manager.js"></script>
+    <script type="text/javascript" src="node_modules/option-selector/lib/option-selector.js"></script>
+    <script type="text/javascript" src="lib/input-wizard.js"></script>
+</head>
+<body>
+    <button id="toggle-visibility">Toggle AutoComplete On/Off</button>
+    <br />
+    <br />
+    <br />
+    <input id="sample-input" type="text" style="width: 400px;" />
+    <br />
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var dic = Dictionary.GetInstance();
+
+        $("#toggle-visibility").on('click', function() {
+            var enabled = $("#sample-input").data('inputWizard').getEnabled();
+            $("#sample-input").data('inputWizard').setEnabled(!enabled);
+        });
+
+        $("#sample-input").inputWizard({
+            popupSettings: {
+                lists: [
+                    {
+                        listClass: "selector-list",
+                        itemClass: "selector-list-item",
+                        selectedItemClass: "selector-list-selected-item",
+                    }
+                ],
+                defaultListIndex: 0,
+                defaultIndex: 0,
+                inputControlClass: "input-control",
+                inputManagerClass: "input-manager"
+            },
+            formatter: function (value, item) {
+                return $("<div style='text-align: right;'></div>").append(value);
+            },
+            selectOnSpacebar: true,
+            fullTextMatching: true,
+            triggers: [
+                {
+                    //http://inimino.org/~inimino/blog/javascript_cset
+                    //https://www.cs.tut.fi/~jkorpela/chars/spaces.html
+                    name: "dictionary",
+                    match: /[^\W\d]+$/,
+                    search: function (term, callback) {
+                        var list1 = dic.GetEnglish2UrduFuzzyMatches(term);
+                        list1.unshift(term);
+
+                        setTimeout(function () {
+                            callback([list1]);
+                        }, 100);
+
+                    },
+                    replace: function (replaceWith, term, listIndex) {
+                        if (listIndex == 0) {
+                            return replaceWith;
+                        }
+                        return term;
+                    }
+                }
+            ],
+            events: {
+                onDataLoad: function (data) {
+                    if (data != null && data[0] && data.length > 0 && data[0].length > 0) {
+                        return true;
+                    }
+                    return false;
+                },
+                onSelected: function (term, sel) {
+                    console.log('record term vs selection');
+                }
+            },
+            extensions: {
+                getSelectorPositionOverride: function (position) {
+                    return {
+                        top: position.top + position.height + 3,
+                        left: position.left
+                    };
+                }
+            }
+
+        });
+
+
+
+    });
+</script>
