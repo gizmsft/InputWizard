@@ -725,9 +725,7 @@
       inputControlClass: "input-control",
       inputManagerClass: "input-manager"
     },
-    fullWordMatchOnly: true,
     selectOnSpacebar: true,
-    fullTextMatching: true,
     formatter: null,
     triggers: null,
     events: {
