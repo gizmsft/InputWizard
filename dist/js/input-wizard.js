@@ -425,7 +425,7 @@
             rootListItemClass: "root-selector-list-item",
             listClass: "selector-list",
             listItemClass: "selector-list-item",
-            selectedListItemClass: "selector-list-selected-item",
+            selectedListItemClass: "selector-list-item-selected",
         },
         mainListTemplate: "<ul></ul>",
         mainListItemTemplate: "<li></li>",
@@ -594,10 +594,10 @@
 
                     $children.each(function (i, item) {
                         if (j != x) {
-                            decorateItem(selectedClass, $(item), -1, i);
+                            decorateItem(selectedClass, $(item), x, -1, i);
                         }
                         else {
-                            decorateItem(selectedClass, $(item), y, i);
+                            decorateItem(selectedClass, $(item), x, y, i);
                         }
                     });
 
@@ -662,7 +662,7 @@
                             $listItem.text(dataItem);
                         }
 
-                        decorateItem(listInfo.selectedListItemClass, $listItem, -1, i);
+                        decorateItem(listInfo.selectedListItemClass, $listItem, -1, -1, i);
                         $list.append($listItem);
                     });
                 }
@@ -671,12 +671,20 @@
     }
 
     // decorates item by adding/removing css classes
-    var decorateItem = function (cssClass, item, selIndex, currIndex) {
+    var decorateItem = function (cssClass, item, currListIndex, selIndex, currIndex) {
+        var selectedCssClass = null;
+
+        if (currListIndex > -1) {
+            selectedCssClass = local.settings.lists[currListIndex].selectedItemClass;
+        }
+
+        selectedCssClass = selectedCssClass || local.settings.css.selectedListItemClass;
+
         if (selIndex != currIndex) {
-            item.removeClass(local.settings.css.selectedListItemClass).removeClass(cssClass);
+            item.removeClass(selectedCssClass).removeClass(cssClass);
         }
         else if (!item.hasClass(cssClass)) {
-            item.addClass(local.settings.css.selectedListItemClass).addClass(cssClass);
+            item.addClass(selectedCssClass).addClass(cssClass);
         }
     }
 
@@ -710,10 +718,16 @@
 
   const defaults = {
     enabled: true,
-    popupSettings: [],
-    inputManagerClass: "input-manager",
-    inputControlClass: "input-control",
+    popupSettings: {
+      lists: [],
+      defaultListIndex: 0,
+      defaultIndex: 0,
+      inputControlClass: "input-control",
+      inputManagerClass: "input-manager"
+    },
     fullWordMatchOnly: true,
+    selectOnSpacebar: true,
+    fullTextMatching: true,
     formatter: null,
     triggers: null,
     events: {
@@ -858,7 +872,7 @@
     var _cacheManager = new CacheManager();
 
     var $inputManager = new InputManager($target, {
-      containerClass: local.settings.inputManagerClass
+      containerClass: local.settings.popupSettings.inputManagerClass
     });
 
     function getEnabled () {
@@ -1232,7 +1246,7 @@
 
     // wrap target element with a wrapper.
     var $container = $("<div></div>");
-    $container.addClass(local.settings.inputControlClass);
+    $container.addClass(local.settings.popupSettings.inputControlClass);
     $target.before($container).detach();
     $container.append(local.highlight);
     $container.append($selector.getUIRoot());
