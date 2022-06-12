@@ -887,6 +887,10 @@
       }
     }
 
+    function getInputState() {
+      return $inputManager.getInputState();
+    }
+
     ///////////////////////////////////////////
     ///////////////////////////////////////////
 
@@ -1280,7 +1284,8 @@
 
     return {
       setEnabled: setEnabled,
-      getEnabled: getEnabled
+      getEnabled: getEnabled,
+      getInputState: getInputState
     };
   }
 
@@ -1290,6 +1295,9 @@
     },
     setEnabled: function (enabled) {
       setEnabled(enabled);
+    },
+    getInputState: function() {
+      this.getInputState();
     }
   }
 
